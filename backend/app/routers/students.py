@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -18,13 +18,14 @@ async def create_student(student: StudentCreate, session: AsyncSession = Depends
 
     session.add(db_student)
     await session.commit()
-    session.refresh(db_student)
+    await session.refresh(db_student)
 
     return db_student
 
 @router.get("/", response_model=list[StudentRead])
 async def get_all_students(session: AsyncSession = Depends(get_session)):
-    db_students = await session.scalars(
+    db_scalars = await session.scalars(
         select(Student).where(Student.is_active == True)
     )
+    db_students = db_scalars.all()
     return db_students
