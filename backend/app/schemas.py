@@ -1,3 +1,6 @@
+from datetime import datetime
+from decimal import Decimal
+
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -23,5 +26,27 @@ class StudentRead(BaseModel):
     name: str = Field(..., description="Имя ученика (2-50 символов)")
     grade: int = Field(..., description="Класс ученика (от 1 до 11)")
     is_active: bool = Field(..., description="Активен ли ученик")
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class LessonCreate(BaseModel):
+    tutor_id: int = Field(..., description="Уникальный идентификатор репетитора")
+    student_id: int = Field(..., description="Уникальный идентификатор ученика")
+    date_time: datetime = Field(..., description="Дата и время занятия")
+    duration: int = Field(..., description="Длительность занятия в минутах")
+    price: Decimal = Field(..., gt=0, decimal_places=2, description="Цена занятия")
+    lessons_done: int = Field(..., description="Количество занятий, проведённых по абонементу")
+    lessons_total: int = Field(..., description="Количество занятий в абонементе")
+
+class LessonRead(BaseModel):
+    id: int = Field(..., description="Уникальный идентификатор занятия")
+    tutor_id: int = Field(..., description="Уникальный идентификатор репетитора")
+    student_id: int = Field(..., description="Уникальный идентификатор ученика")
+    date_time: datetime = Field(..., description="Дата и время занятия")
+    duration: int = Field(..., description="Длительность занятия в минутах")
+    price: Decimal = Field(..., gt=0, decimal_places=2, description="Цена занятия")
+    lessons_done: int = Field(..., description="Количество занятий, проведённых по абонементу")
+    lessons_total: int = Field(..., description="Количество занятий в абонементе")
 
     model_config = ConfigDict(from_attributes=True)
