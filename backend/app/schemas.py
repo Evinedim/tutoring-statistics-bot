@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from decimal import Decimal
 
 from pydantic import BaseModel, Field, ConfigDict
@@ -33,7 +33,7 @@ class StudentRead(BaseModel):
 class LessonCreate(BaseModel):
     tutor_id: int = Field(..., description="Уникальный идентификатор репетитора")
     student_id: int = Field(..., description="Уникальный идентификатор ученика")
-    date_time: datetime = Field(..., description="Дата и время занятия")
+    lesson_date: date = Field(..., description="Дата занятия")
     duration: int = Field(..., description="Длительность занятия в минутах")
     price: Decimal = Field(..., gt=0, decimal_places=2, description="Цена занятия")
     lessons_done: int = Field(..., description="Количество занятий, проведённых по абонементу")
@@ -43,7 +43,7 @@ class LessonRead(BaseModel):
     id: int = Field(..., description="Уникальный идентификатор занятия")
     tutor_id: int = Field(..., description="Уникальный идентификатор репетитора")
     student_id: int = Field(..., description="Уникальный идентификатор ученика")
-    date_time: datetime = Field(..., description="Дата и время занятия")
+    lesson_date: date = Field(..., description="Дата занятия")
     duration: int = Field(..., description="Длительность занятия в минутах")
     price: Decimal = Field(..., gt=0, decimal_places=2, description="Цена занятия")
     lessons_done: int = Field(..., description="Количество занятий, проведённых по абонементу")

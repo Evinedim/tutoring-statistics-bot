@@ -7,6 +7,7 @@ app = FastAPI()
 
 app.include_router(students.router)
 app.include_router(tutors.router)
+app.include_router(lessons.router)
 
 @app.get("/")
 async def health():
