@@ -10,6 +10,7 @@ class TutorCreate(BaseModel):
 
 class TutorRead(BaseModel):
     id: int = Field(..., description="Уникальный идентификатор репетитора")
+    telegram_id: int = Field(..., description="Уникальный идентификатор репетитора в Telegram")
     name: str = Field(..., description="Имя репетитора (2-50 символов)")
     discipline: str = Field(..., description="Название преподаваемой дисциплины")
     is_active: bool = Field(..., description="Активен ли репетитор")

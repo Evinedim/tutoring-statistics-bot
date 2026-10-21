@@ -2,7 +2,7 @@ from datetime import date
 from decimal import Decimal
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Boolean, Date, Numeric, ForeignKey
+from sqlalchemy import Integer, BigInteger, String, Boolean, Date, Numeric, ForeignKey
 
 from backend.app.database import Base
 
@@ -11,7 +11,7 @@ class Tutor(Base):
     __tablename__ = "tutors"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    telegram_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     discipline: Mapped[str] = mapped_column(String(50), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
