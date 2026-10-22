@@ -1,4 +1,4 @@
-"""create model for linking a tutor with students
+"""create model for linking tutors with students
 
 Revision ID: 181900f74685
 Revises: 7d9698661852

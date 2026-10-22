@@ -2,9 +2,17 @@ from datetime import date
 from decimal import Decimal
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, BigInteger, String, Boolean, Date, Numeric, ForeignKey
+from sqlalchemy import Integer, BigInteger, String, Boolean, Date, Numeric, ForeignKey, Table, Column
 
 from backend.app.database import Base
+
+
+tutor_student = Table(
+    "tutors_students",
+    Base.metadata,
+    Column("tutor_id", ForeignKey("tutors.id"), primary_key=True),
+    Column("student_id", ForeignKey("students.id"), primary_key=True)
+)
 
 
 class Tutor(Base):
@@ -16,8 +24,8 @@ class Tutor(Base):
     discipline: Mapped[str] = mapped_column(String(50), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
+    students: Mapped[list["Student"]] = relationship(secondary=tutor_student, back_populates="tutors")
     lessons: Mapped[list["Lesson"]] = relationship("Lesson", back_populates="tutor")
-    tutors_students: Mapped[list["TutorStudent"]] = relationship("TutorStudent", back_populates="tutor")
 
 
 class Student(Base):
@@ -28,18 +36,9 @@ class Student(Base):
     grade: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
+    tutors: Mapped[list["Tutor"]] = relationship(secondary=tutor_student, back_populates="students")
     lessons: Mapped[list["Lesson"]] = relationship("Lesson", back_populates="student")
-    tutors_students: Mapped[list["TutorStudent"]] = relationship("TutorStudent", back_populates="student")
 
-
-class TutorStudent(Base):
-    __tablename__ = "tutors_students"
-
-    tutor_id: Mapped[int] = mapped_column(ForeignKey("tutors.id"), primary_key=True)
-    student_id: Mapped[int] = mapped_column(ForeignKey("students.id"), primary_key=True)
-
-    tutor: Mapped["Tutor"] = relationship("Tutor", back_populates="tutors_students")
-    student: Mapped["Student"] = relationship("Student", back_populates="tutors_students")
 
 
 class Lesson(Base):
