@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -12,9 +12,18 @@ router = APIRouter(
     tags=["tutors"]
 )
 
-@router.post("/", response_model=TutorRead, status_code=status.HTTP_201_CREATED)
-async def create_tutor(tutor: TutorCreate, session: AsyncSession = Depends(get_session)):
-    db_tutor = Tutor(**tutor.model_dump())
+@router.post("/{telegram_id}", response_model=TutorRead, status_code=status.HTTP_201_CREATED)
+async def create_tutor(telegram_id: int, tutor: TutorCreate, session: AsyncSession = Depends(get_session)):
+    db_scalars = await session.scalars(
+        select(Tutor).where(Tutor.telegram_id == telegram_id)
+    )
+    if db_scalars.first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Tutor with such telegram id has already existed"
+            )
+
+    db_tutor = Tutor(telegram_id=telegram_id, name=tutor.name, discipline=tutor.discipline)
 
     session.add(db_tutor)
     await session.commit()
