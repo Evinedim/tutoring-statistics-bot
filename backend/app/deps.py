@@ -18,10 +18,7 @@ async def get_current_tutor(
     )
     db_tutor = db_scalars.first()
     if db_tutor is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="Tutor not found or inactive"
-            )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Tutor not found")
     return db_tutor
 
 async def get_student(

@@ -32,8 +32,6 @@ class StudentRead(BaseModel):
 
 
 class LessonCreate(BaseModel):
-    tutor_id: int = Field(..., description="Уникальный идентификатор репетитора")
-    student_id: int = Field(..., description="Уникальный идентификатор ученика")
     lesson_date: date = Field(..., description="Дата занятия")
     duration: int = Field(..., description="Длительность занятия в минутах")
     price: Decimal = Field(..., gt=0, decimal_places=2, description="Цена занятия")
