@@ -2,7 +2,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, delete
 
 from backend.app.database import get_session
 from backend.app.schemas import LessonCreate, LessonRead
@@ -59,7 +59,7 @@ async def update_lesson(
 
     for field, value in lesson.model_dump().items():
         setattr(db_lesson, field, value)
-        
+
     await session.commit()
     await session.refresh(db_lesson)
     return db_lesson
