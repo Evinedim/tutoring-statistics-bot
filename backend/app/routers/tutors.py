@@ -5,6 +5,7 @@ from sqlalchemy import select
 from backend.app.database import get_session
 from backend.app.schemas import TutorCreate, TutorRead
 from backend.app.models import Tutor
+from backend.app.deps import get_telegram_id
 
 
 router = APIRouter(
@@ -12,8 +13,12 @@ router = APIRouter(
     tags=["tutors"]
 )
 
-@router.post("/{telegram_id}", response_model=TutorRead, status_code=status.HTTP_201_CREATED)
-async def create_tutor(telegram_id: int, tutor: TutorCreate, session: AsyncSession = Depends(get_session)):
+@router.post("/", response_model=TutorRead, status_code=status.HTTP_201_CREATED)
+async def create_tutor(
+    tutor: TutorCreate, 
+    telegram_id: int = Depends(get_telegram_id), 
+    session: AsyncSession = Depends(get_session)
+):
     db_scalars = await session.scalars(
         select(Tutor).where(Tutor.telegram_id == telegram_id)
     )
@@ -23,7 +28,7 @@ async def create_tutor(telegram_id: int, tutor: TutorCreate, session: AsyncSessi
             detail="Tutor with such telegram id has already existed"
             )
 
-    db_tutor = Tutor(telegram_id=telegram_id, name=tutor.name, discipline=tutor.discipline)
+    db_tutor = Tutor(telegram_id=telegram_id, **tutor.model_dump())
 
     session.add(db_tutor)
     await session.commit()
