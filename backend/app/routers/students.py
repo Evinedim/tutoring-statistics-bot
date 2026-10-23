@@ -25,7 +25,6 @@ async def create_student(
     session.add(db_student)
     await session.commit()
     await session.refresh(db_student)
-
     return db_student
 
 @router.get("/", response_model=list[StudentRead])

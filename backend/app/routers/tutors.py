@@ -33,7 +33,6 @@ async def create_tutor(
     session.add(db_tutor)
     await session.commit()
     await session.refresh(db_tutor)
-
     return db_tutor
 
 @router.get("/", response_model=list[TutorRead])
