@@ -2,7 +2,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from backend.app.database import get_session
 from backend.app.schemas import LessonCreate, LessonRead
@@ -42,3 +42,16 @@ async def get_lessons(
         )
     )
     return db_scalars.all()
+
+@router.delete("/{lesson_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_lesson(
+    lesson_id: int, 
+    tutor: Tutor = Depends(get_current_tutor), 
+    session = Depends(get_session)
+):
+    result = await session.execute(
+        delete(Lesson).where(Lesson.id == lesson_id, Lesson.tutor_id == tutor.id)
+    )
+    if result.rowcount == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lesson not found")
+    await session.commit()
