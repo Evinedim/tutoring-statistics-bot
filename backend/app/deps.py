@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from backend.app.database import get_session
-from backend.app.models import Tutor
+from backend.app.models import Tutor, Student
 
 
 async def get_telegram_id(telegram_id: int = Header(...), ) -> int:
@@ -23,3 +23,20 @@ async def get_current_tutor(
             detail="Tutor not found or inactive"
             )
     return db_tutor
+
+async def get_student(
+    student_id: int,
+    tutor: Tutor = Depends(get_current_tutor),
+    session: AsyncSession = Depends(get_session)
+) -> Student:
+    db_scalars = await session.scalars(
+        select(Student).where(
+            Student.id == student_id,
+            Student.tutors.any(Tutor.id == tutor.id),
+            Student.is_active == True
+        )
+    )
+    db_student = db_scalars.first()
+    if db_student is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
+    return db_student
